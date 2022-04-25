@@ -21,7 +21,7 @@ var sprinting := false
 const FLOOR_MAX_ANGLE: float = deg2rad(46.0)
 export(float) var gravity = 33.0
 export(int) var walk_speed = 22
-export(int) var sprint_speed = 51
+export(int) var sprint_speed = 55
 export(int) var crouch_speed = 11
 export(int) var slide_speed = 35
 export(float) var crouch_mul = 0.5
@@ -32,7 +32,7 @@ export(float, 0.0, 1.0, 0.05) var air_control = 0.5
 export(int) var jump_height = 12
 export(float) var sprint_cooldown = 2
 export(float) var sprint_duration = 0.8
-export(float, 0.0, 1.0, 0.05) var sprint_air_control = 0.3
+export(float, 0.0, 1.0, 0.05) var sprint_air_control = 0.5
 export(float) var double_jump_mul = 1.1
 
 var _speed: int
@@ -189,6 +189,7 @@ func accelerate(delta: float) -> void:
 		
 	else:
 		_temp_accel = deacceleration
+		
 	
 	if not is_on_floor():
 		if sprinting:
@@ -199,8 +200,14 @@ func accelerate(delta: float) -> void:
 	# Interpolation
 	_temp_vel = _temp_vel.linear_interpolate(_target, _temp_accel * delta)
 	
-	velocity.x = _temp_vel.x
-	velocity.z = _temp_vel.z
+	if sprinting and sprint_timer > 0.2:
+		velocity.x = velocity.x
+		velocity.z = velocity.z
+		if not is_on_floor():
+			velocity.y = 0
+	else:
+		velocity.x = _temp_vel.x
+		velocity.z = _temp_vel.z
 	
 	# Make too low values zero
 	if direction.dot(velocity) == 0:
@@ -217,12 +224,11 @@ func jump() -> void:
 		snap = Vector3.ZERO
 		if not _is_double_input:
 			jump_x_dir = move_axis.y
-		print(direction)
+
 	if _is_double_input:
 		velocity.y = jump_height * double_jump_mul
 		if jump_x_dir == 1 and move_axis.y == -1 or jump_x_dir == -1 and move_axis.y == 1:
 			velocity.x *= -1
-		#print(direction)
 		snap = Vector3.ZERO
 
 func sprint(delta: float) -> void:
