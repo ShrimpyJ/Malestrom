@@ -44,54 +44,12 @@ var sprint_timer : float
 var can_double_jump : bool
 var jump_x_dir : float
 
-# Weapons
-var animation_manager
-
-var current_weapon_name = "UNARMED"
-var weapons = {"UNARMED":null, "KNIFE":null, "PISTOL":null, "RIFLE":null}
-const WEAPON_NUMBER_TO_NAME = {0:"UNARMED", 1:"KNIFE", 2:"PISTOL", 3:"RIFLE"}
-const WEAPON_NAME_TO_NUMBER = {"UNARMED":0, "KNIFE":1, "PISTOL":2, "RIFLE":3}
-var changing_weapon = false
-var changing_weapon_name = "UNARMED"
-
-var health = 100
-
-var UI_status_label
-
 ##################################################
 
 # Called when the node enters the scene tree
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	cam.fov = FOV
-	
-	# Animation stuff, doesn't work yet
-	#animation_manager = $Mode/Animation_Player
-	#animation_manager.callback_function = funcref(self, "fire_bullet")
-
-	#weapons["KNIFE"] = $Gun_Fire_Points/Knife_Point
-	#weapons["PISTOL"] = $Gun_Fire_Points/Pistol_Point
-	#weapons["RIFLE"] = $Gun_Fire_Points/Rifle_Point
-
-	#var gun_aim_point_pos = $Gun_Aim_Point.global_transform.origin
-
-	#for weapon in weapons:
-#		var weapon_node = weapons[weapon]
-	#	if weapon_node != null:
-	#		#weapon_node.player_node = self
-	#		weapon_node.look_at(gun_aim_point_pos, Vector3(0, 1, 0))
-	#		weapon_node.rotate_object_local(Vector3(0, 1, 0), deg2rad(180))
-
-	#current_weapon_name = "UNARMED"
-	#changing_weapon_name = "UNARMED"
-
-	#UI_status_label = $HUD/Panel/Gun_label
-
-func fire_bullet():
-	if changing_weapon == true:
-		return
-	$pistol.play()
-	weapons[current_weapon_name].fire_weapon()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame
 func _process(_delta: float) -> void:
@@ -129,40 +87,9 @@ func _process(_delta: float) -> void:
 		_is_crouch_input = false
 	
 	# Weapons
-	var weapon_change_number = WEAPON_NAME_TO_NUMBER[current_weapon_name]
-
-	if Input.is_key_pressed(KEY_1):
-		weapon_change_number = 0
-	if Input.is_key_pressed(KEY_2):
-		weapon_change_number = 1
-	if Input.is_key_pressed(KEY_3):
-		weapon_change_number = 2
-	if Input.is_key_pressed(KEY_4):
-		weapon_change_number = 3
-
-	if Input.is_action_just_pressed("shift_weapon_positive"):
-		weapon_change_number += 1
-	if Input.is_action_just_pressed("shift_weapon_negative"):
-		weapon_change_number -= 1
-
-	weapon_change_number = clamp(weapon_change_number, 0, WEAPON_NUMBER_TO_NAME.size() - 1)
-
-	if changing_weapon == false:
-		if WEAPON_NUMBER_TO_NAME[weapon_change_number] != current_weapon_name:
-			changing_weapon_name = WEAPON_NUMBER_TO_NAME[weapon_change_number]
-			changing_weapon = true
-	# ----------------------------------
-
-	# ----------------------------------
-	# Firing the weapons
 	if Input.is_action_just_pressed("shoot_primary"):
 		$pistol.play()
-		if changing_weapon == false:
-			var current_weapon = weapons[current_weapon_name]
-			if current_weapon != null:
-				if animation_manager.current_state == current_weapon.IDLE_ANIM_NAME:
-					animation_manager.set_animation(current_weapon.FIRE_ANIM_NAME)
-	# ----------------------------------
+
 
 # Called every physics tick. 'delta' is constant
 func _physics_process(delta: float) -> void:
