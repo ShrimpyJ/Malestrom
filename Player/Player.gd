@@ -302,7 +302,7 @@ func sprint(delta: float) -> void:
 	if can_sprint():
 		_speed = sprint_speed
 		if not is_on_floor():
-			_speed *= 1.2
+			_speed *= 1
 		cam.set_fov(lerp(cam.fov, FOV * 1.05, delta * 8))
 		sprinting = true
 		
