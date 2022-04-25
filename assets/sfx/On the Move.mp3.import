@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/On the Move.mp3-cd3b13f1fc5915fe0d51bdc4d9f770f2.mp3str"
+
+[deps]
+
+source_file="res://assets/sfx/On the Move.mp3"
+dest_files=[ "res://.import/On the Move.mp3-cd3b13f1fc5915fe0d51bdc4d9f770f2.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0
