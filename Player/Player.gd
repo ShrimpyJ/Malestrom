@@ -65,26 +65,25 @@ func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	cam.fov = FOV
 	
-	animation_manager = $Mode/Animation_Player
+	# Animation stuff, doesn't work yet
+	#animation_manager = $Mode/Animation_Player
 	#animation_manager.callback_function = funcref(self, "fire_bullet")
 
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	#weapons["KNIFE"] = $Gun_Fire_Points/Knife_Point
+	#weapons["PISTOL"] = $Gun_Fire_Points/Pistol_Point
+	#weapons["RIFLE"] = $Gun_Fire_Points/Rifle_Point
 
-	weapons["KNIFE"] = $Gun_Fire_Points/Knife_Point
-	weapons["PISTOL"] = $Gun_Fire_Points/Pistol_Point
-	weapons["RIFLE"] = $Gun_Fire_Points/Rifle_Point
+	#var gun_aim_point_pos = $Gun_Aim_Point.global_transform.origin
 
-	var gun_aim_point_pos = $Gun_Aim_Point.global_transform.origin
+	#for weapon in weapons:
+#		var weapon_node = weapons[weapon]
+	#	if weapon_node != null:
+	#		#weapon_node.player_node = self
+	#		weapon_node.look_at(gun_aim_point_pos, Vector3(0, 1, 0))
+	#		weapon_node.rotate_object_local(Vector3(0, 1, 0), deg2rad(180))
 
-	for weapon in weapons:
-		var weapon_node = weapons[weapon]
-		if weapon_node != null:
-			#weapon_node.player_node = self
-			weapon_node.look_at(gun_aim_point_pos, Vector3(0, 1, 0))
-			weapon_node.rotate_object_local(Vector3(0, 1, 0), deg2rad(180))
-
-	current_weapon_name = "UNARMED"
-	changing_weapon_name = "UNARMED"
+	#current_weapon_name = "UNARMED"
+	#changing_weapon_name = "UNARMED"
 
 	#UI_status_label = $HUD/Panel/Gun_label
 
@@ -315,4 +314,4 @@ func sprint(delta: float) -> void:
 
 func can_sprint() -> bool:
 	return _is_sprinting_input
-	return (sprint_enabled and is_on_floor() and _is_sprinting_input and move_axis.x >= 0.5)
+	#return (sprint_enabled and is_on_floor() and _is_sprinting_input and move_axis.x >= 0.5)
