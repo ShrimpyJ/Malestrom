@@ -21,7 +21,7 @@ var sprinting := false
 const FLOOR_MAX_ANGLE: float = deg2rad(46.0)
 export(float) var gravity = 33.0
 export(int) var walk_speed = 22
-export(int) var sprint_speed = 55
+export(int) var sprint_speed = 52
 export(int) var crouch_speed = 11
 export(int) var slide_speed = 35
 export(float) var crouch_mul = 0.5
@@ -57,16 +57,17 @@ func _process(_delta: float) -> void:
 		cam.v_offset = -0.5
 	else:
 		cam.v_offset = 0
+	
 	sprint_timer += _delta
 	
-	move_axis.x = Input.get_action_strength("move_forward") - Input.get_action_strength("move_backward")
+	if not sprinting:
+		move_axis.x = Input.get_action_strength("move_forward") - Input.get_action_strength("move_backward")
 	move_axis.y = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 
 	# Double Jump
-	if not is_on_floor() and can_double_jump and Input.is_action_just_pressed("move_jump"):
+	if Input.is_action_just_pressed("move_jump") and not is_on_floor() and can_double_jump and not sprinting:
 		_is_double_input = true
 		can_double_jump = false
-	
 	if is_on_floor():
 		can_double_jump = true
 		
@@ -79,6 +80,8 @@ func _process(_delta: float) -> void:
 		$dash.play()
 		_is_sprinting_input = true
 		sprint_timer = 0
+	if sprinting and direction == Vector3(0,0,0):
+		move_axis.x = 1
 	
 	# Crouch/slide
 	if Input.is_action_pressed("move_crouch"):
@@ -175,22 +178,23 @@ func accelerate(delta: float) -> void:
 	var _temp_accel: float
 	#var _target: Vector3 = direction * _speed
 	var _target: Vector3
+	
 	if  _is_crouch_input:
 		if _is_sprinting_input:
 			_target = direction * slide_speed
 		else:
 			_target = direction * crouch_speed
+	elif sprinting:
+		_target = direction * _speed
 	else:
 		_target = direction * _speed
 	
 	_temp_vel.y = 0
 	if direction.dot(_temp_vel) > 0:
-		_temp_accel = acceleration
-		
+		_temp_accel = acceleration	
 	else:
 		_temp_accel = deacceleration
 		
-	
 	if not is_on_floor():
 		if sprinting:
 			_temp_accel *= sprint_air_control
@@ -198,13 +202,15 @@ func accelerate(delta: float) -> void:
 			_temp_accel *= air_control
 
 	# Interpolation
+	print(velocity.y)
 	_temp_vel = _temp_vel.linear_interpolate(_target, _temp_accel * delta)
-	
 	if sprinting and sprint_timer > 0.2:
 		velocity.x = velocity.x
 		velocity.z = velocity.z
+		
 		if not is_on_floor():
 			velocity.y = 0
+
 	else:
 		velocity.x = _temp_vel.x
 		velocity.z = _temp_vel.z
@@ -234,8 +240,6 @@ func jump() -> void:
 func sprint(delta: float) -> void:
 	if can_sprint():
 		_speed = sprint_speed
-		if not is_on_floor():
-			_speed *= 1
 		cam.set_fov(lerp(cam.fov, FOV * 1.05, delta * 8))
 		sprinting = true
 		
